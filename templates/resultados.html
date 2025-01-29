@@ -1,0 +1,34 @@
+{% extends "index.html" %}
+
+{% block main %}
+<div class="form" style="text-align: left; padding-right: 20rem; background-color: white;">
+    <form action="/results" method="POST" style="text-align: left; background-color: white;">
+        <div> <button type="submit" name="back"> Voltar </button> </div>
+    </form>
+</div>
+
+{% for tipo, candidatos in resultados.items() %}
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th colspan="3">{{ tipo }}</th>
+            </tr>
+            <tr>
+                <th>CLASSIFICAÇÃO</th>
+                <th>NOME</th>
+                <th>PONTUAÇÃO</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for nome, dados in candidatos.items() %}
+                <tr>
+                    <td>{{ dados["NU_CLASSIFICACAO"] }}</td>
+                    <td>{{ nome }}</td>
+                    <td>{{ dados["NU_NOTA_CANDIDATO"] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+{% endblock %}
