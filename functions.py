@@ -1,9 +1,9 @@
 import os, csv
 
-def get_universidades(estado: str) -> list[str]:
-    path = f"C://Users//HP Victus//Desktop//Python//testes//31-45//test_41_sisu//documents//{estado}"
-    path = os.listdir(path)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+def get_universidades(estado: str) -> list[str]:
+    path = os.path.join(BASE_DIR, "documents", estado)
     universidades: list[str] = []
 
     for universidade in path:
