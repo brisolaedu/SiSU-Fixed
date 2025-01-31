@@ -1,17 +1,13 @@
-import os
-import csv
+import os, csv
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def get_universidades(estado: str) -> list[str]:
     path = os.path.join(BASE_DIR, "documents", estado)
+    universidades: list[str] = []
 
-    if not os.path.exists(path):
-        return []
-
-    universidades: list[str] = [
-        f.split(".")[0].upper() for f in os.listdir(path) if f.endswith(".csv")
-    ]
+    for universidade in path:
+        universidades.append(universidade.split(".")[0].upper())
 
     return sorted(universidades)
 
@@ -19,43 +15,39 @@ def get_universidades(estado: str) -> list[str]:
 def get_campi(universidade: str, estado: str) -> list[str]:
     path = os.path.join(BASE_DIR, "documents", estado, f"{universidade}.csv")
 
-    if not os.path.exists(path):
-        return []
-
-    campi: set[str] = set()
+    campi: list[str] = []
 
     with open(path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
 
         for row in reader:
-            campi.add(row["NO_CAMPUS"])
+            if row["NO_CAMPUS"] not in campi:
+                campi.append(row["NO_CAMPUS"])
 
-    return sorted(campi)
+    campi.sort()
+
+    return campi
 
 
 def get_cursos(campus: str, universidade: str, estado: str) -> list[str]:
     path = os.path.join(BASE_DIR, "documents", estado, f"{universidade}.csv")
 
-    if not os.path.exists(path):
-        return []
-
-    cursos: set[str] = set()
+    cursos: list[str] = []
 
     with open(path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
 
         for row in reader:
-            if row["NO_CAMPUS"] == campus:
-                cursos.add(row["NO_CURSO"])
+            if row["NO_CURSO"] not in cursos and row["NO_CAMPUS"] == campus:
+                cursos.append(row["NO_CURSO"])
 
-    return sorted(cursos)
+    cursos.sort()
+
+    return cursos
 
 
 def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict:
-    path = os.path.join(BASE_DIR, "documents", estado, f"{universidade}.csv")
-
-    if not os.path.exists(path):
-        return {}
+    path = f"documents//{estado}//{universidade}.csv"
 
     resultados: dict = {}
 
@@ -63,23 +55,16 @@ def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict
         reader = csv.DictReader(file, delimiter=";")
 
         for row in reader:
-            if row["NO_CAMPUS"] == campus and row["NO_CURSO"] == curso:
-                tipo_concorrencia = row["TIPO_CONCORRENCIA"]
-                inscrito = row["NO_INSCRITO"]
+            if row["TIPO_CONCORRENCIA"] not in resultados:
+                resultados[row["TIPO_CONCORRENCIA"]] = {}
 
-                if tipo_concorrencia not in resultados:
-                    resultados[tipo_concorrencia] = {}
+            if row["NO_INSCRITO"] and row["NO_CAMPUS"] == campus and row["NO_CURSO"] == curso:
+                resultados[row["TIPO_CONCORRENCIA"]][row["NO_INSCRITO"]] = {"NU_CLASSIFICACAO": int(row["NU_CLASSIFICACAO"]), "NU_NOTA_CANDIDATO": row["NU_NOTA_CANDIDATO"]}
 
-                resultados[tipo_concorrencia][inscrito] = {
-                    "NU_CLASSIFICACAO": int(row["NU_CLASSIFICACAO"]),
-                    "NU_NOTA_CANDIDATO": row["NU_NOTA_CANDIDATO"],
-                }
+    sorted_data = {}
 
-    sorted_data = {
-        category: dict(
-            sorted(candidates.items(), key=lambda item: item[1]["NU_CLASSIFICACAO"])
-        )
-        for category, candidates in resultados.items()
-    }
-
+    for category, candidates in resultados.items():
+        sorted_data[category] = dict(sorted(candidates.items(), key=lambda item: item[1]["NU_CLASSIFICACAO"]))
+    
     return sorted_data
+                
