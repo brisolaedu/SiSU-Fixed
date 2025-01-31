@@ -6,7 +6,7 @@ def get_universidades(estado: str) -> list[str]:
     path = os.path.join(BASE_DIR, "documents", estado)
     universidades: list[str] = []
 
-    for universidade in path:
+    for universidade in os.listdir(path):
         universidades.append(universidade.split(".")[0].upper())
 
     return sorted(universidades)
@@ -24,9 +24,7 @@ def get_campi(universidade: str, estado: str) -> list[str]:
             if row["NO_CAMPUS"] not in campi:
                 campi.append(row["NO_CAMPUS"])
 
-    campi.sort()
-
-    return campi
+    return sorted(campi)
 
 
 def get_cursos(campus: str, universidade: str, estado: str) -> list[str]:
@@ -41,9 +39,7 @@ def get_cursos(campus: str, universidade: str, estado: str) -> list[str]:
             if row["NO_CURSO"] not in cursos and row["NO_CAMPUS"] == campus:
                 cursos.append(row["NO_CURSO"])
 
-    cursos.sort()
-
-    return cursos
+    return sorted(cursos)
 
 
 def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict:
