@@ -43,7 +43,7 @@ def get_cursos(campus: str, universidade: str, estado: str) -> list[str]:
 
 
 def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict:
-    path = f"documents//{estado}//{universidade}.csv"
+    path = os.path.join(BASE_DIR, "documents", estado, f"{universidade}.csv")
 
     resultados: dict = {}
 
