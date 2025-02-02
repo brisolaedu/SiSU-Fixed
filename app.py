@@ -106,14 +106,14 @@ def results():
     campus = session.get("campus")
     curso = session.get("curso")
 
-    resultados = get_results(curso, campus, universidade, estado)
+    resultados, info = get_results(curso, campus, universidade, estado)
 
     if request.method == "POST":
         if "back" in request.form: 
             session["curso"] = None
             return redirect("/estado")  
     
-    return render_template("resultados.html", resultados=resultados)
+    return render_template("resultados.html", resultados=resultados, info=info)
 
 
 if __name__ == "__main__":

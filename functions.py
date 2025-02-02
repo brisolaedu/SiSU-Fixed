@@ -46,6 +46,7 @@ def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict
     path = os.path.join(BASE_DIR, "documents", estado, f"{universidade}.csv")
 
     resultados: dict = {}
+    info: dict = {}
 
     with open(path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
@@ -53,6 +54,7 @@ def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict
         for row in reader:
             if row["TIPO_CONCORRENCIA"] not in resultados:
                 resultados[row["TIPO_CONCORRENCIA"]] = {}
+                info[row["TIPO_CONCORRENCIA"]] = row["NO_MODALIDADE_CONCORRENCIA"]
 
             if row["NO_INSCRITO"] and row["NO_CAMPUS"] == campus and row["NO_CURSO"] == curso:
                 resultados[row["TIPO_CONCORRENCIA"]][row["NO_INSCRITO"]] = {"NU_CLASSIFICACAO": int(row["NU_CLASSIFICACAO"]), "NU_NOTA_CANDIDATO": row["NU_NOTA_CANDIDATO"]}
@@ -62,5 +64,6 @@ def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict
     for category, candidates in resultados.items():
         sorted_data[category] = dict(sorted(candidates.items(), key=lambda item: item[1]["NU_CLASSIFICACAO"]))
     
-    return sorted_data
+    return sorted_data, info
+
                 
