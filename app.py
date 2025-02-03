@@ -1,8 +1,8 @@
-from functions import get_universidades, get_campi, get_cursos, get_results
+from functions import get_universidades, get_campi, get_cursos, get_results, get_key
 from flask import Flask, render_template, redirect, request, session
 
 app = Flask(__name__)
-app.secret_key = "0123456789"
+app.secret_key = get_key()
 
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 

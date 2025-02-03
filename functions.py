@@ -1,4 +1,4 @@
-import os, csv
+import os, csv, hashlib, string, random
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -66,4 +66,13 @@ def get_results(curso: str, campus: str, universidade: str, estado: str) -> dict
     
     return sorted_data, info
 
-                
+
+def get_key() -> str:
+    chars = string.ascii_uppercase + string.digits
+
+    key_word =  "".join(random.choice(chars) for _ in range(random.randint(1, 1000000)))
+
+    sha256 = hashlib.sha256()
+    sha256.update(key_word.encode("utf-8"))
+
+    return sha256.hexdigest()
